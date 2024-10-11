@@ -1,0 +1,14 @@
+[package]
+name = "t1_lexer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "tokenize"
+path = "src/tokenize.rs"
+
+[[bin]]
+name = "tokens"
+path = "src/tokens.rs"
