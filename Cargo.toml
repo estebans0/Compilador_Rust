@@ -12,3 +12,7 @@ path = "src/tokenize.rs"
 [[bin]]
 name = "tokens"
 path = "src/tokens.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"

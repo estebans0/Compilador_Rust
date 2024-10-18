@@ -3,11 +3,13 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use std::env;
 use crate::TokenType::Operator;
+use std::clone::Clone;
+
 // fn main() {
 //     println!("Hello, world!");
 // }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Debug)]
 pub enum TokenType {
     EOF,
     Illegal,
@@ -47,7 +49,14 @@ pub enum TokenType {
 }
 
 // token = intlit, lexeme = "123", row = 1, col = 1
-#[derive(PartialEq)]
+
+enum SyntaxError {
+    UnexpectedToken {
+        expected:TokenType,
+        found: TokenType,
+    }
+}
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
@@ -69,7 +78,7 @@ impl Parser {
         } else {
             Err(SyntaxError::UnexpectedToken {
                 expected,
-                found: self.current_token.token_type
+                found: self.current_token.token_type.clone(),
             })
         }
     }
@@ -98,11 +107,11 @@ impl Parser {
             self.parse_command_prime();
         }
         // Cmd’ -> ;single-command Cmd’| e
-        fn parse_command_prime(&mut self) {
+        fn parse_command_prime(&mut self) -> Result<(), SyntaxError> {
             if self.current_token.token_type == TokenType::Semicolon {
                 self.parser_accept_it();
                 self.parse_single_command();
-                self.parse_command_prime();
+                self.parse_command_prime()
             } else {
                 Ok(()) // empty sentence ε
             }
@@ -142,7 +151,7 @@ impl Parser {
                 },
                 _ => Err(SyntaxError::UnexpectedToken {
                     expected: TokenType::Const,
-                    found: self.current_token.tokenType,
+                    found: self.current_token.token_type.clone(),
                 }),
             }
         }
@@ -152,7 +161,7 @@ impl Parser {
         //              | Vn' := Expression
         //              | ( Actual-Parameter-Sequence ) -> APSequence
         fn parse_single_command_prime(&mut self) {
-            if self.current_token.tokenType == TokenType::LeftParen {
+            if self.current_token.token_type == TokenType::LeftParen {
                 self.parse_ap_sequence();
                 self.parser_accept_it();
                 self.parser_accept(TokenType::RightParen)?;
@@ -164,22 +173,22 @@ impl Parser {
         //Declaration -> single-Declaration D’
         //D’ -> ; single-Declaration D’|e
         fn parse_declaration(&mut self) {
-            if self.current_token.tokenType == TokenType::Semicolon {
+            if self.current_token.token_type == TokenType::Semicolon {
                 self.parser_accept_it();
-                self.parse_single_declaration()?;
-                self.parse_declaration_prime()?;
+                self.parse_single_declaration();
+                self.parse_declaration_prime();
             } else {
-                Ok(()) // empty sentence ε
+                Ok(()); // empty sentence ε
             }
         }
 
         fn parse_declaration_prime(&mut self) {
-            if self.current_token.tokenType == TokenType::Semicolon {
-                parser_AcceptIt();
-                parseSingleDeclaration()?;
-                parseDeclarationPrime()?;
+            if self.current_token.token_type == TokenType::Semicolon {
+                self.parser_accept_it();
+                self.parse_single_declaration();
+                self.parse_declaration_prime();
             } else {
-                Ok(()) // empty sentence ε
+                Ok(()); // empty sentence ε
             }
         }
 
@@ -215,17 +224,17 @@ impl Parser {
         // | proc Identififer ( Formal-Parameter-Sequence ) ~ single-Command
         // | func Identififer ( Formal-Parameter-Sequence ) : Type-denoter ~ Expression
         // | type Identifier ~ Type-denoter
-        fn parse_single_declaration(&mut self) {
+        fn parse_single_declaration(&mut self) -> Result<(), SyntaxError> {
             self.parser_accept_it();
-            match self.current_token.tokenType {
+            match self.current_token.token_type {
                 TokenType::Const => {
                     self.parser_accept(TokenType::Identifier)?;
                     self.parser_accept(TokenType::Tilde)?; // ~
-                    self.parse_expression()
+                    Ok(self.parse_expression())
                 },
                 TokenType::Var => {
                     self.parser_accept(TokenType::Colon)?;
-                    self.parse_type_denoter()
+                    Ok(self.parse_type_denoter()?)
                 },
                 TokenType::Proc => {
                     self.parser_accept(TokenType::Identifier)?;
@@ -234,7 +243,7 @@ impl Parser {
                     self.parser_accept_it();
                     self.parser_accept(TokenType::RightParen)?;
                     self.parser_accept(TokenType::Tilde)?;
-                    self.parse_single_command()
+                    Ok(self.parse_single_command())
                 },
                 TokenType::Func => {
                     self.parser_accept(TokenType::Identifier)?;
@@ -246,16 +255,18 @@ impl Parser {
                     self.parse_type_denoter()?;
                     self.parser_accept_it();
                     self.parser_accept(TokenType::Tilde)?;
-                    self.parse_expression()
+                    Ok(self.parse_expression())
                 },
                 TokenType::Type => {
                     self.parser_accept(TokenType::Identifier)?;
                     self.parser_accept(TokenType::Tilde)?;
-                    self.parse_type_denoter()
+                    self.parse_type_denoter()?;
+                    self.parser_accept_it();
+                    Ok(self.parse_expression())
                 },
                 _ => Err(SyntaxError::UnexpectedToken {
                     expected: TokenType::Const,
-                    found: self.current_token.tokenType,
+                    found: self.current_token.token_type.clone(),
                 }),
             }
         }
@@ -266,12 +277,12 @@ impl Parser {
         fn parse_formal_parameter_sequence(&mut self) -> Result<(), SyntaxError> {
             self.parser_accept_it();
             // if parse.current_token.tokenType == TokenType.Identifier or parse.current_token.tokenType == TokenType.Var or parse.current_token.tokenType == TokenType.Proc of parse.current_token.tokenType == TokenType.Func or parse.current_token.tokenType == TokenType.Colon{
-            //     parseProperFPSequence()
+            //     parse_proper_fpsequence()
             // } else {
             //     // empty sentence
             // }
             if let TokenType::Identifier | TokenType::Var | TokenType::Proc | TokenType::Func = self.current_token.token_type {
-                parseProperFPSequence()
+                Ok(self.parse_proper_fpsequence())
             } else {
                 Ok(()) // empty sentence ε
             }
@@ -282,7 +293,7 @@ impl Parser {
         // pFPS’ -> e|,proper-FP-Secuence
         fn parse_proper_fpsequence(&mut self) {
             {
-                //self.parser_AcceptIt();
+                //self.parser_accept_it();
                 self.parse_formal_parameter_sequence();
                 self.parse_proper_fpsequence_prime();
             }
@@ -293,7 +304,7 @@ impl Parser {
             if self.current_token.token_type == TokenType::Comma {
                 self.parse_proper_fpsequence()
             } else {
-                Ok(()) // ε  empty sentence
+                Ok(());// ε  empty sentence
             }
         }
 
@@ -302,26 +313,26 @@ impl Parser {
         // | proc Identifier ( Formal-Param-Seq )
         // | func Identifier ( Formal-Param-Seq ) : Type-denoter
 
-        fn parse_formal_parameter(mut self) {
-            self.parser_AcceptIt();
+        fn parse_formal_parameter(mut self) ->Result<(), SyntaxError>{
+            self.parser_accept_it();
             match self.current_token.token_type {
                 TokenType::Identifier => {
-                    self.parser_Accept(TokenType::Colon)?;
-                    self.parseTypeDenoter()
+                    self.parser_accept(TokenType::Colon)?;
+                    self.parse_type_denoter()
                 },
                 TokenType::Var => {
-                    self.parser_Accept(TokenType::Identifier)?;
-                    self.parser_Accept(TokenType::Colon)?;
-                    self.parseTypeDenoter()
+                    self.parser_accept(TokenType::Identifier)?;
+                    self.parser_accept(TokenType::Colon)?;
+                    self.parse_type_denoter()
                 },
                 TokenType::Proc | TokenType::Func => {
-                    self.parser_Accept(TokenType::Identifier)?;
-                    self.parser_Accept(TokenType::LeftParen)?;
+                    self.parser_accept(TokenType::Identifier)?;
+                    self.parser_accept(TokenType::LeftParen)?;
                     self.parse_formal_parameter_sequence()?;
-                    self.parser_AcceptIt();
-                    self.parser_Accept(TokenType::RightParen)?;
-                    self.parser_Accept(TokenType::Colon)?;
-                    self.parseTypeDenoter()
+                    self.parser_accept_it();
+                    self.parser_accept(TokenType::RightParen)?;
+                    self.parser_accept(TokenType::Colon)?;
+                    self.parse_type_denoter()
                 },
                 _ => Err(SyntaxError::UnexpectedToken {
                     expected: TokenType::Identifier,
@@ -338,14 +349,14 @@ impl Parser {
 
         fn parse_actual_parameter(&mut self) {
             self.parser_accept_it();
-            match self.current_token.tokenType {
+            match self.current_token.token_type {
                 TokenType::Var => {
                     self.parser_accept_it();
                     self.parse_vname()
                 },
                 TokenType::Proc | TokenType::Func => {
                     self.parser_accept_it();
-                    self.parser_accept(TokenType::Identifier)
+                    self.parser_accept(TokenType::Identifier);
                 },
                 _ => self.parse_expression(),
             }
@@ -356,7 +367,7 @@ impl Parser {
         //                  | record Record-Type-denoter end
 
         fn parse_type_denoter(&mut self) -> Result<(), SyntaxError> {
-            match self.current_token.tokenType {
+            match self.current_token.token_type {
                 TokenType::Identifier => {
                     self.parser_accept_it();
                     Ok(())
@@ -375,7 +386,7 @@ impl Parser {
                 },
                 _ => Err(SyntaxError::UnexpectedToken {
                     expected: TokenType::Identifier,
-                    found: self.current_token.tokenType,
+                    found: self.current_token.token_type.clone(),
                 }),
             }
         }
@@ -395,7 +406,7 @@ impl Parser {
             if self.current_token.token_type == TokenType::Comma {
                 self.parse_record_type_denoter()
             } else {
-                Ok(()); // ε empty sentence
+                Ok(())// ε empty sentence
             }
         }
 
@@ -452,7 +463,7 @@ impl Parser {
         fn parse_primary_expression(&mut self) {                                         //*
             if self.current_token.token_type == TokenType::IntegerLiteral {              //*
                 self.parser_accept_it();                                                //*
-            } else if self.current_token.token_type == TokenType::CharacterLiteral {     //*
+            } else if self.current_token.token_type == TokenType::CharLiteral {     //*
                 self.parser_accept_it();                                                //*
             } else if self.current_token.token_type == TokenType::Identifier {           //*
                 self.parser_accept_it();                                                //*
@@ -534,24 +545,24 @@ impl Parser {
             }
         }
     }
-}
-    fn main() {
-        let args: Vec<String> = env::args().collect();
 
-        if args.len() < 2 {
-            eprintln!("Uso: {} <archivo_entrada> [-o <archivo_salida>]", args[0]);
-            std::process::exit(1);
-        }
+fn main() {
+    let args: Vec<String> = env::args().collect();
 
-        let input_file = &args[1];
-        let mut output_file: Option<&str> = None;
-
-        if args.len() == 4 && args[2] == "-o" {
-            output_file = Some(&args[3]);
-        }
-
-        if let Err(e) = process_file(input_file, output_file) {
-            eprintln!("Error: {}", e);
-            std::process::exit(1);
-        }
+    if args.len() < 2 {
+        eprintln!("Uso: {} <archivo_entrada> [-o <archivo_salida>]", args[0]);
+        std::process::exit(1);
     }
+
+    let input_file = &args[1];
+    let mut output_file: Option<&str> = None;
+
+    if args.len() == 4 && args[2] == "-o" {
+        output_file = Some(&args[3]);
+    }
+
+    if let Err(e) = process_file(input_file, output_file) {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
+}
