@@ -262,23 +262,23 @@ fn process_file(input_file: &str, output_file: Option<&str>) -> io::Result<()> {
     Ok(())
 }
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() < 2 {
-        eprintln!("Uso: {} <archivo_entrada> [-o <archivo_salida>]", args[0]);
-        std::process::exit(1);
-    }
-
-    let input_file = &args[1];
-    let mut output_file: Option<&str> = None;
-
-    if args.len() == 4 && args[2] == "-o" {
-      output_file = Some(&args[3]);
-    }
-
-    if let Err(e) = process_file(input_file, output_file) {
-        eprintln!("Error: {}", e);
-        std::process::exit(1);
-    }
-}
+// fn main() {
+//     let args: Vec<String> = env::args().collect();
+//
+//     if args.len() < 2 {
+//         eprintln!("Uso: {} <archivo_entrada> [-o <archivo_salida>]", args[0]);
+//         std::process::exit(1);
+//     }
+//
+//     let input_file = &args[1];
+//     let mut output_file: Option<&str> = None;
+//
+//     if args.len() == 4 && args[2] == "-o" {
+//       output_file = Some(&args[3]);
+//     }
+//
+//     if let Err(e) = process_file(input_file, output_file) {
+//         eprintln!("Error: {}", e);
+//         std::process::exit(1);
+//     }
+// }

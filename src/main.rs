@@ -1,15 +1,18 @@
 use std::fs::File;
-use std::io::{self, BufRead};
+use std::io::{self, BufRead, Write};
 use std::path::Path;
 use std::env;
 use crate::TokenType::Operator;
 use std::clone::Clone;
+use crate::tokenize::Lexer;
+
+mod tokenize;
 
 // fn main() {
 //     println!("Hello, world!");
 // }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone, Debug, Eq)]
 pub enum TokenType {
     EOF,
     Illegal,
@@ -276,11 +279,6 @@ impl Parser {
         //                      | proper-FP-Sequence
         fn parse_formal_parameter_sequence(&mut self) -> Result<(), SyntaxError> {
             self.parser_accept_it();
-            // if parse.current_token.tokenType == TokenType.Identifier or parse.current_token.tokenType == TokenType.Var or parse.current_token.tokenType == TokenType.Proc of parse.current_token.tokenType == TokenType.Func or parse.current_token.tokenType == TokenType.Colon{
-            //     parse_proper_fpsequence()
-            // } else {
-            //     // empty sentence
-            // }
             if let TokenType::Identifier | TokenType::Var | TokenType::Proc | TokenType::Func = self.current_token.token_type {
                 Ok(self.parse_proper_fpsequence())
             } else {
@@ -545,6 +543,32 @@ impl Parser {
             }
         }
     }
+
+fn process_file(input_file: &str, output_file: Option<&str>) -> io::Result<()> {
+    let input_path = Path::new(input_file);
+    let file = File::open(input_path)?;
+    let reader = io::BufReader::new(file);
+    let content = reader.lines().collect::<Result<Vec<_>, _>>()?.join("\n");
+
+    let mut lexer = Lexer::new(content);
+
+    let output: Box<dyn Write> = if let Some(out_file) = output_file {
+        Box::new(File::create(out_file)?)
+    } else {
+        Box::new(File::create("tokens.out")?)
+    };
+    let mut output = io::BufWriter::new(output);
+
+    loop {
+        let token = lexer.next_token();
+        writeln!(output, "Token {{ Tipo: {:?}, Lexema: '{}', Ln: {}, Col: {} }}", token.token_type, token.lexeme, token.row, token.col)?;
+        if token.token_type == crate::tokenize::TokenType::EOF {
+            break;
+        }
+    }
+
+    Ok(())
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
