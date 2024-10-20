@@ -129,33 +129,34 @@ impl Parser {
             match self.current_token.token_type {
                 TokenType::Identifier => {
                     self.parser_accept_it();
-                    self.parseSingleCommandPrime();
+                    self.parse_single_command_prime();
                 },
                 TokenType::Begin => {
                     self.parse_declaration();
                     self.parser_accept_it();
                     self.parser_accept(TokenType::In);
-                    self.parse_single_command()?;
+                    self.parse_single_command();
                 },
                 TokenType::If => {
-                    self.parse_expression()?;
+                    self.parse_expression();
                     self.parser_accept_it();
-                    self.parser_accept(TokenType::Then)?;
-                    self.parse_single_command()?;
+                    self.parser_accept(TokenType::Then);
+                    self.parse_single_command();
                     self.parser_accept_it();
-                    self.parser_accept(TokenType::Else)?;
-                    self.parse_single_command()?
+                    self.parser_accept(TokenType::Else);
+                    self.parse_single_command()
                 },
                 TokenType::While => {
-                    self.parse_expression()?;
+                    self.parse_expression();
                     self.parser_accept_it();
                     self.parser_accept(TokenType::Do);
-                    self.parse_single_command()?
+                    self.parse_single_command()
                 },
-                _ => Err(SyntaxError::UnexpectedToken {
-                    expected: TokenType::Const,
-                    found: self.current_token.token_type.clone(),
-                }),
+                // _ => Err(SyntaxError::UnexpectedToken {
+                //     expected: TokenType::Const,
+                //     found: self.current_token.token_type.clone(),
+                // }),
+                _ => todo!(), //el compilador dice
             }
         }
 
@@ -165,10 +166,10 @@ impl Parser {
         //              | ( Actual-Parameter-Sequence ) -> APSequence
         fn parse_single_command_prime(&mut self) {
             if self.current_token.token_type == TokenType::LeftParen {
-                self.parse_ap_sequence();
+                //self.parse_ap_sequence();
                 self.parser_accept_it();
-                self.parser_accept(TokenType::RightParen)?;
-                self.parseAPSequence()
+                self.parser_accept(TokenType::RightParen);
+                //self.parse_apsequence()
             } else {
                 self.parse_vname_prime();
             }
@@ -181,7 +182,7 @@ impl Parser {
                 self.parse_single_declaration();
                 self.parse_declaration_prime();
             } else {
-                Ok(()); // empty sentence ε
+                //Ok(()); // empty sentence ε
             }
         }
 
@@ -191,7 +192,7 @@ impl Parser {
                 self.parse_single_declaration();
                 self.parse_declaration_prime();
             } else {
-                Ok(()); // empty sentence ε
+                //Ok(()); // empty sentence ε
             }
         }
 
@@ -302,7 +303,7 @@ impl Parser {
             if self.current_token.token_type == TokenType::Comma {
                 self.parse_proper_fpsequence()
             } else {
-                Ok(());// ε  empty sentence
+                //Ok(());// ε  empty sentence
             }
         }
 
@@ -445,7 +446,7 @@ impl Parser {
                 self.parse_primary_expression();
                 self.parse_seprime();
             } else {
-                Ok(());
+                //Ok(());
             }
         }
 
@@ -468,7 +469,7 @@ impl Parser {
                 self.parse_vname_prime();                                                //*
                 if self.current_token.token_type == TokenType::LeftParen {               //*
                     self.parser_accept_it();                                            //*
-                    self.parseActualParameterSequence();                               //*
+                    self.parse_formal_parameter_sequence();                               //*
                     self.parser_accept(TokenType::RightParen);                         //*
                 }                                                                      //*
             } else if self.current_token.token_type == TokenType::Operator {             //*
@@ -503,7 +504,7 @@ impl Parser {
             if self.current_token.token_type == TokenType::Comma {
                 self.parse_record_aggregate();
             } else {
-                Ok(());
+                //Ok(());
             }
         }
 
@@ -519,7 +520,7 @@ impl Parser {
             if self.current_token.token_type == TokenType::Comma {
                 self.parse_array_aggregate();
             } else {
-                Ok(());
+                //Ok(());
             }
         }
 
@@ -539,7 +540,7 @@ impl Parser {
                 self.parser_accept(TokenType::RightBracket);
                 self.parse_vname_prime();
             } else {
-                Ok(());
+                //Ok::<()>(());
             }
         }
     }
