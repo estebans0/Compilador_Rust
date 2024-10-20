@@ -5,6 +5,8 @@ use std::env;
 use crate::TokenType::Operator;
 use std::clone::Clone;
 use crate::tokenize::Lexer;
+use std::io::Read;
+use regex::Regex;
 
 mod tokenize;
 
@@ -53,10 +55,14 @@ pub enum TokenType {
 
 // token = intlit, lexeme = "123", row = 1, col = 1
 
+#[derive(Debug, PartialEq, Clone)]
 enum SyntaxError {
     UnexpectedToken {
         expected:TokenType,
         found: TokenType,
+    },
+    NoFoundToken{
+        found: String
     }
 }
 #[derive(Debug, PartialEq, Clone)]
@@ -571,7 +577,124 @@ fn process_file(input_file: &str, output_file: Option<&str>) -> io::Result<()> {
     Ok(())
 }
 
-fn main() {
+// fn main() {
+//     let args: Vec<String> = env::args().collect();
+//
+//     if args.len() < 2 {
+//         eprintln!("Uso: {} <archivo_entrada> [-o <archivo_salida>]", args[0]);
+//         std::process::exit(1);
+//     }
+//
+//     let input_file = &args[1];
+//     let mut output_file: Option<&str> = None;
+//
+//     if args.len() == 4 && args[2] == "-o" {
+//         output_file = Some(&args[3]);
+//     }
+//
+//     // Create an empty mutable string
+//     let mut file_content = String::new();
+//
+//     // Copy contents of file to a mutable string
+//     input_file.read_to_string(&mut file_content).unwrap();
+//
+//     println!("File content: {:?}", file_content);
+//
+//     println!("Data file: {:?}", input_file);
+// }
+
+
+fn match_token(input: &str) -> Result<TokenType, SyntaxError> {
+    // https://stackoverflow.com/questions/39070244/can-i-convert-a-string-to-enum-without-macros-in-rust
+    match input {
+        "EOF" => Ok(TokenType::EOF),
+        "Illegal" => Ok(TokenType::Illegal),
+        "Identifier" => Ok(TokenType::Identifier),
+        "IntegerLiteral" => Ok(TokenType::IntegerLiteral),
+        "CharLiteral" => Ok(TokenType::CharLiteral),
+        "Operator" => Ok(TokenType::Operator),
+        "Array" => Ok(TokenType::Array),
+        "Begin" => Ok(TokenType::Begin),
+        "Const" => Ok(TokenType::Const),
+        "Do" => Ok(TokenType::Do),
+        "Else" => Ok(TokenType::Else),
+        "End" => Ok(TokenType::End),
+        "Func" => Ok(TokenType::Func),
+        "If" => Ok(TokenType::If),
+        "In" => Ok(TokenType::In),
+        "Let" => Ok(TokenType::Let),
+        "Of" => Ok(TokenType::Of),
+        "Proc" => Ok(TokenType::Proc),
+        "Record" => Ok(TokenType::Record),
+        "Then" => Ok(TokenType::Then),
+        "Type" => Ok(TokenType::Type),
+        "Var" => Ok(TokenType::Var),
+        "While" => Ok(TokenType::While),
+        "Period" => Ok(TokenType::Period),
+        "Colon" => Ok(TokenType::Colon),
+        "Semicolon" => Ok(TokenType::Semicolon),
+        "Comma" => Ok(TokenType::Comma),
+        "Equals" => Ok(TokenType::Equals),
+        "Tilde" => Ok(TokenType::Tilde),
+        "LeftParen" => Ok(TokenType::LeftParen),
+        "RightParen" => Ok(TokenType::RightParen),
+        "LeftBracket" => Ok(TokenType::LeftBracket),
+        "RightBracket" => Ok(TokenType::RightBracket),
+        "LeftBrace" => Ok(TokenType::LeftBrace),
+        "RightBrace" => Ok(TokenType::RightBrace),
+        _ => Err(SyntaxError::NoFoundToken {
+            found: input.to_string()
+        }),
+    }
+}
+
+
+fn extract_tokens(content: &str) -> Vec<Token>{
+    let mut tokens = Vec::new();
+    // https://docs.rs/regex/latest/regex/struct.Captures.html
+    // https://rust-lang-nursery.github.io/rust-cookbook/text/regex.html
+    // use regex::Regex;
+    //
+    // let re = Regex::new(r"([0-9]{4})-([0-9]{2})-([0-9]{2})").unwrap();
+    // let hay = "1973-01-05, 1975-08-25 and 1980-10-18";
+    //
+    // let mut dates: Vec<(&str, &str, &str)> = vec![];
+    // for (_, [y, m, d]) in re.captures_iter(hay).map(|c| c.extract()) {
+    //     dates.push((y, m, d));
+    // }
+    // assert_eq!(dates, vec![
+    //     ("1973", "01", "05"),
+    //     ("1975", "08", "25"),
+    //     ("1980", "10", "18"),
+    // ]);
+
+
+    let re = Regex::new(r"Token\s*\{\s*Tipo:\s*(?P<tipo>\w+),\s*Lexema:\s*'(?P<lexema>.*?)',\s*Ln:\s*(?P<ln>\d+),\s*Col:\s*(?P<col>\d+)\s*\}").unwrap();
+
+
+    for cap in re.captures_iter(&content) {
+        let tipo = &cap["tipo"];
+        let lexema = &cap["lexema"];
+        let ln = &cap["ln"];
+        let col = &cap["col"];
+
+        tokens.push(
+            Token {
+                token_type: match_token(tipo).unwrap(),  // Unwrap to get TokenType
+                lexeme: lexema.to_string(),
+                col: col.parse().unwrap_or(0),  // Default to 0 if parsing fails
+                row: ln.parse().unwrap_or(0),   // Default to 0 if parsing fails
+            }
+        );
+
+        //println!("Tipo: {}, Lexema: '{}', Ln: {}, Col: {}", tipo, lexema, ln, col);
+    }
+
+    tokens
+}
+
+
+fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
@@ -586,8 +709,16 @@ fn main() {
         output_file = Some(&args[3]);
     }
 
-    if let Err(e) = process_file(input_file, output_file) {
-        eprintln!("Error: {}", e);
-        std::process::exit(1);
-    }
+    let mut input_file = File::open(&args[1])?;
+    let mut file_content = String::new();
+
+    input_file.read_to_string(&mut file_content)?;
+    //println!("File content: {:?}", file_content);
+
+    let tokens = extract_tokens(&file_content);
+    println!("Tokens: {:?}", tokens);
+
+
+    Ok(())
 }
+

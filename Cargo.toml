@@ -1,9 +1,11 @@
 [package]
-name = "t1_lexer"
+name = "Compilador_Rust"
 version = "0.1.0"
 edition = "2021"
+default-run = "main"
 
 [dependencies]
+regex = "1.11.0"
 
 [[bin]]
 name = "tokenize"
