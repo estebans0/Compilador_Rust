@@ -172,3 +172,9 @@ Esto facilita la depuración, ya que se puede ubicar rápidamente el error en el
 * Parsing Recursivo: Se utiliza un conjunto de métodos para analizar comandos (`let`, `if`, `begin ... end`, etc.) y construir el árbol de parsing.
 * Construcción del Árbol: Cada construcción se representa como un nodo en el árbol de parsing, que finalmente se escribe en un archivo de salida.
 * Manejo de Errores: Cualquier error durante el parsing se reporta con el detalle necesario para corregirlo fácilmente.
+
+## 2.8. Ejecución
+El lexer puede ser ejecutado mediante terminal usando el comando:
+```bash
+cargo run --bin parse salida.tok -o arbol.out
+```
