@@ -1,12 +1,15 @@
-hola mundo 234;
-(324) + 998 * 3324
-
-!    
-func prueba();    
-
-'e' sto es una prueb'a' dsf
-
-! 'comentario de prueba'      324;
-345.
-
-:=fin
+let
+   const shift ~ ord('a') - ord('A');
+   var i : integer;
+   func capital (var chr : Char) : Boolean ~
+       (ord('A') <= ord(ch))
+         /\\ (ord(ch) <= ord('Z'))
+in
+! hola
+  begin
+   a := a + 1;
+   if capital(current) ! hola
+   then
+   chr(ord(current) + shift)
+   else current := 3
+  end

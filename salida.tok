@@ -1,28 +1,82 @@
-Token { Tipo: Identifier, Lexema: 'hola', Ln: 1, Col: 1 }
-Token { Tipo: Identifier, Lexema: 'mundo', Ln: 1, Col: 6 }
-Token { Tipo: IntegerLiteral, Lexema: '234', Ln: 1, Col: 12 }
-Token { Tipo: Semicolon, Lexema: ';', Ln: 1, Col: 15 }
-Token { Tipo: LeftParen, Lexema: '(', Ln: 2, Col: 1 }
-Token { Tipo: IntegerLiteral, Lexema: '324', Ln: 2, Col: 2 }
-Token { Tipo: RightParen, Lexema: ')', Ln: 2, Col: 5 }
-Token { Tipo: Operator, Lexema: '+', Ln: 2, Col: 7 }
-Token { Tipo: IntegerLiteral, Lexema: '998', Ln: 2, Col: 9 }
-Token { Tipo: Operator, Lexema: '*', Ln: 2, Col: 13 }
-Token { Tipo: IntegerLiteral, Lexema: '3324', Ln: 3, Col: 15 }
-Token { Tipo: Func, Lexema: 'func', Ln: 5, Col: 1 }
-Token { Tipo: Identifier, Lexema: 'prueba', Ln: 5, Col: 6 }
-Token { Tipo: LeftParen, Lexema: '(', Ln: 5, Col: 12 }
-Token { Tipo: RightParen, Lexema: ')', Ln: 5, Col: 13 }
-Token { Tipo: Semicolon, Lexema: ';', Ln: 5, Col: 14 }
-Token { Tipo: CharLiteral, Lexema: 'e', Ln: 7, Col: 1 }
-Token { Tipo: Identifier, Lexema: 'sto', Ln: 7, Col: 5 }
-Token { Tipo: Identifier, Lexema: 'es', Ln: 7, Col: 9 }
-Token { Tipo: Identifier, Lexema: 'una', Ln: 7, Col: 12 }
-Token { Tipo: Identifier, Lexema: 'prueb', Ln: 7, Col: 16 }
-Token { Tipo: CharLiteral, Lexema: 'a', Ln: 7, Col: 21 }
-Token { Tipo: Identifier, Lexema: 'dsf', Ln: 8, Col: 25 }
-Token { Tipo: IntegerLiteral, Lexema: '345', Ln: 10, Col: 1 }
-Token { Tipo: Period, Lexema: '.', Ln: 10, Col: 4 }
-Token { Tipo: Equals, Lexema: ':=', Ln: 12, Col: 1 }
-Token { Tipo: Identifier, Lexema: 'fin', Ln: 12, Col: 3 }
-Token { Tipo: EOF, Lexema: '', Ln: 12, Col: 6 }
+{Let, 'let', 2, 1}
+{Const, 'const', 2, 4}
+{Identifier, 'shift', 2, 10}
+{Tilde, '~', 2, 16}
+{Identifier, 'ord', 2, 18}
+{LeftParen, '(', 2, 21}
+{CharLiteral, 'a', 2, 22}
+{RightParen, ')', 2, 25}
+{Operator, '-', 2, 27}
+{Identifier, 'ord', 2, 29}
+{LeftParen, '(', 2, 32}
+{CharLiteral, 'A', 2, 33}
+{RightParen, ')', 2, 36}
+{Semicolon, ';', 2, 37}
+{Var, 'var', 3, 4}
+{Identifier, 'i', 3, 8}
+{Colon, ':', 3, 10}
+{Identifier, 'integer', 3, 12}
+{Semicolon, ';', 3, 19}
+{Func, 'func', 4, 4}
+{Identifier, 'capital', 4, 9}
+{LeftParen, '(', 4, 17}
+{Var, 'var', 4, 18}
+{Identifier, 'chr', 4, 22}
+{Colon, ':', 4, 26}
+{Identifier, 'Char', 4, 28}
+{RightParen, ')', 4, 32}
+{Colon, ':', 4, 34}
+{Identifier, 'Boolean', 4, 36}
+{Tilde, '~', 4, 44}
+{LeftParen, '(', 5, 8}
+{Identifier, 'ord', 5, 9}
+{LeftParen, '(', 5, 12}
+{CharLiteral, 'A', 5, 13}
+{RightParen, ')', 5, 16}
+{Operator, '<=', 5, 18}
+{Identifier, 'ord', 5, 21}
+{LeftParen, '(', 5, 24}
+{Identifier, 'ch', 5, 25}
+{RightParen, ')', 5, 27}
+{RightParen, ')', 5, 28}
+{Operator, '/\\', 6, 10}
+{LeftParen, '(', 6, 14}
+{Identifier, 'ord', 6, 15}
+{LeftParen, '(', 6, 18}
+{Identifier, 'ch', 6, 19}
+{RightParen, ')', 6, 21}
+{Operator, '<=', 6, 23}
+{Identifier, 'ord', 6, 26}
+{LeftParen, '(', 6, 29}
+{CharLiteral, 'Z', 6, 30}
+{RightParen, ')', 6, 33}
+{RightParen, ')', 6, 34}
+{In, 'in', 8, 1}
+{Begin, 'begin', 10, 3}
+{Identifier, 'a', 10, 4}
+{Assign, ':=', 10, 6}
+{Identifier, 'a', 10, 9}
+{Operator, '+', 10, 11}
+{IntegerLiteral, '1', 10, 13}
+{Semicolon, ';', 10, 14}
+{If, 'if', 11, 4}
+{Identifier, 'capital', 11, 7}
+{LeftParen, '(', 11, 14}
+{Identifier, 'current', 11, 15}
+{RightParen, ')', 11, 22}
+{Then, 'then', 13, 4}
+{Identifier, 'chr', 13, 4}
+{LeftParen, '(', 13, 7}
+{Identifier, 'ord', 13, 8}
+{LeftParen, '(', 13, 11}
+{Identifier, 'current', 13, 12}
+{RightParen, ')', 13, 19}
+{Operator, '+', 13, 21}
+{Identifier, 'shift', 13, 23}
+{RightParen, ')', 13, 28}
+{Else, 'else', 14, 4}
+{Identifier, 'current', 14, 9}
+{Assign, ':=', 14, 17}
+{IntegerLiteral, '3', 15, 20}
+{End, 'end', 15, 3}
+{EOF, '', 15, 6}

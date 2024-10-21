@@ -40,6 +40,7 @@ pub enum TokenType {
     RightBracket,
     LeftBrace,
     RightBrace,
+    Assign,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -116,7 +117,6 @@ impl Lexer {
         }
     }
 
-    // Verifica si el lexema es un identifier o keyword
     fn read_identifier(&mut self) -> Token {
         let start_col = self.col;
         let start_pos = self.curr_pos;
@@ -162,7 +162,41 @@ impl Lexer {
         Token::new(TokenType::IntegerLiteral, lexeme, self.row, start_col)
     }
 
-    // Función para obtener el siguiente token
+    fn read_operator(&mut self) -> Token {
+        let start_col = self.col;
+        let start_pos = self.curr_pos;
+
+        while is_operator_char(self.curr_char) {
+            self.read_char();
+        }
+
+        let lexeme: String = self.input[start_pos..self.curr_pos].iter().collect();
+        let token_type = match lexeme.as_str() {
+            "+" => TokenType::Operator,
+            "-" => TokenType::Operator,
+            "*" => TokenType::Operator,
+            "/" => TokenType::Operator,
+            "/\\" => TokenType::Operator,
+            "\\/" => TokenType::Operator,
+            "<=" => TokenType::Operator,
+            ">=" => TokenType::Operator,
+            _ => TokenType::Operator,
+        };
+
+        Token::new(token_type, lexeme, self.row, start_col)
+    }
+
+    fn read_character(&mut self) -> Token {
+        let start_col = self.col;
+
+        self.read_char(); // Skip opening '
+        let char_lit = self.curr_char;
+        self.read_char(); // Read character
+        self.read_char(); // Skip closing '
+
+        Token::new(TokenType::CharLiteral, char_lit.to_string(), self.row, start_col)
+    }
+
     pub fn next_token(&mut self) -> Token {
         self.skip_whitespace_and_comments();
 
@@ -178,41 +212,28 @@ impl Lexer {
             ':' => {
                 if self.look_ahead() == '=' {
                     self.read_char();
-                    Token::new(TokenType::Equals, ":=".to_string(), self.row, start_col)
+                    Token::new(TokenType::Assign, ":=".to_string(), self.row, start_col)
                 } else {
                     self.create_token(TokenType::Colon, start_col)
                 }
             }
-            '=' => {
-                if self.look_ahead() == '=' {
-                    self.read_char();
-                    Token::new(TokenType::Operator, "==".to_string(), self.row, start_col)
-                } else {
-                    self.create_token(TokenType::Operator, start_col)
-                }
-            }
-            '.' => self.create_token(TokenType::Period, start_col),
             ';' => self.create_token(TokenType::Semicolon, start_col),
             ',' => self.create_token(TokenType::Comma, start_col),
+            '.' => self.create_token(TokenType::Period, start_col),
+            '=' => self.create_token(TokenType::Equals, start_col),
             '~' => self.create_token(TokenType::Tilde, start_col),
-            '+' | '-' | '*' | '/' | '<' | '>' | '&' | '@' | '%' | '^' | '?' => {
-                self.create_token(TokenType::Operator, start_col)
+            '\'' => {
+                return self.read_character();
             }
             '\0' => Token::new(TokenType::EOF, "".to_string(), self.row, start_col),
-            '\'' => {
-                // Charliteral
-                self.read_char();
-                let char_lit = self.curr_char.to_string();
-                self.read_char();
-                Token::new(TokenType::CharLiteral, char_lit, self.row, start_col)
-            }
             _ => {
                 if is_letter(self.curr_char) {
                     return self.read_identifier();
                 } else if is_digit(self.curr_char) {
                     return self.read_number();
+                } else if is_operator_char(self.curr_char) {
+                    return self.read_operator();
                 } else {
-                    // Todo lo no reconocido es un token ilegal
                     self.create_token(TokenType::Illegal, start_col)
                 }
             }
@@ -235,6 +256,10 @@ fn is_digit(ch: char) -> bool {
     ch.is_digit(10)
 }
 
+fn is_operator_char(ch: char) -> bool {
+    matches!(ch, '+' | '-' | '*' | '/' | '=' | '<' | '>' | '&' | '@' | '%' | '^' | '?' | '\\')
+}
+
 // Procesar el archivo de input y escribir los tokens en el archivo de output
 fn process_file(input_file: &str, output_file: Option<&str>) -> io::Result<()> {
     let input_path = Path::new(input_file);
@@ -253,7 +278,7 @@ fn process_file(input_file: &str, output_file: Option<&str>) -> io::Result<()> {
 
     loop {
         let token = lexer.next_token();
-        writeln!(output, "Token {{ Tipo: {:?}, Lexema: '{}', Ln: {}, Col: {} }}", token.token_type, token.lexeme, token.row, token.col)?;
+        writeln!(output, "{{{:?}, '{}', {}, {}}}", token.token_type, token.lexeme, token.row, token.col)?;
         if token.token_type == TokenType::EOF {
             break;
         }
@@ -262,6 +287,7 @@ fn process_file(input_file: &str, output_file: Option<&str>) -> io::Result<()> {
     Ok(())
 }
 
+#[allow(dead_code)]
 fn main() {
     let args: Vec<String> = env::args().collect();
 
