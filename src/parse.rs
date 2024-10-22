@@ -79,7 +79,7 @@ pub enum ASTNode {
     Proc(String, Vec<ASTNode>, Box<ASTNode>),
     Type(String, Box<ASTNode>),
     Assign(Vec<String>, Box<ASTNode>),
-    If(Box<ASTNode>, Box<ASTNode>, Box<ASTNode>),
+    If(Box<ASTNode>, crate::TokenType , Box<ASTNode>, crate::TokenType ,Box<ASTNode>),
     While(Box<ASTNode>, Box<ASTNode>),
     Call(String, Vec<ASTNode>),
     Expression(Box<ASTNode>),
@@ -87,7 +87,8 @@ pub enum ASTNode {
     Number(i64),
     Char(char),
     Operator(String, Box<ASTNode>, Box<ASTNode>),
-    Block(Vec<ASTNode>),
+    Declaration(Vec<ASTNode>),
+    Command(Vec<ASTNode>),
 }
 
 pub struct Parser {
@@ -142,7 +143,7 @@ impl Parser {
       if commands.len() == 1 {
           Ok(commands.pop().unwrap())
       } else {
-          Ok(ASTNode::Block(commands))
+          Ok(ASTNode::Command(commands))
       }
   }
 
@@ -190,7 +191,9 @@ impl Parser {
               let else_branch = self.parse_command()?;
               Ok(ASTNode::If(
                   Box::new(condition),
+                  TokenType::Then,
                   Box::new(then_branch),
+                  TokenType::Else,
                   Box::new(else_branch),
               ))
           }
@@ -255,7 +258,9 @@ impl Parser {
               let else_branch = self.parse_expression()?;
               Ok(ASTNode::If(
                   Box::new(condition),
+                  TokenType::Then,
                   Box::new(then_branch),
+                  TokenType::Else,
                   Box::new(else_branch),
               ))
           }
@@ -274,7 +279,7 @@ impl Parser {
       if declarations.len() == 1 {
           Ok(declarations.pop().unwrap())
       } else {
-          Ok(ASTNode::Block(declarations))
+          Ok(ASTNode::Declaration(declarations))
       }
   }
 

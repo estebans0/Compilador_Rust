@@ -1,5 +1,5 @@
 Let(
-    Block(
+    Declaration(
         [
             Const(
                 "shift",
@@ -84,7 +84,7 @@ Let(
             ),
         ],
     ),
-    Block(
+    Command(
         [
             Assign(
                 [
@@ -109,6 +109,7 @@ Let(
                         ),
                     ],
                 ),
+                Then,
                 Call(
                     "chr",
                     [
@@ -128,6 +129,7 @@ Let(
                         ),
                     ],
                 ),
+                Else,
                 Assign(
                     [
                         "current",
