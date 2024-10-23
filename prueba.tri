@@ -12,4 +12,4 @@ in
    then
    chr(ord(current) + shift)
    else current := 3
-  end
+  =
