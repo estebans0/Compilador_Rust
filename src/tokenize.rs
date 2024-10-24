@@ -1,3 +1,8 @@
+// Integrantes
+// - Esteban Solano
+// - Matias Leer
+// - Melissa Carvajal
+
 use std::fs::File;
 use std::io::{self, BufRead, Write};
 use std::path::Path;
