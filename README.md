@@ -178,3 +178,7 @@ El lexer puede ser ejecutado mediante terminal usando el comando:
 ```bash
 cargo run --bin parse salida.tok -o arbol.out
 ```
+Si desea visualizar una version simplificada del analisis sintactico (un Abstract Syntax Tree), ejecute el siguiente comando:
+```bash
+cargo run --bin pare arbol.out
+```

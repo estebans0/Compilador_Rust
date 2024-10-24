@@ -8,10 +8,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="193ca668-aa09-4aeb-918d-73f4c4b4a0ec" name="Changes" comment="Extraccion de tokens">
+      <change afterPath="$PROJECT_DIR$/src/pare.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arbol.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prueba.tri" beforeDir="false" afterPath="$PROJECT_DIR$/prueba.tri" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/salida.tok" beforeDir="false" afterPath="$PROJECT_DIR$/salida.tok" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/parse.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/parse.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tree.out" beforeDir="false" afterPath="$PROJECT_DIR$/tree.out" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +24,13 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:dev" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -45,30 +57,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Cargo.Run main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Run main.executor&quot;: &quot;Debug&quot;,
-    &quot;Cargo.Run parse.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Run t1_lexer.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Run tokenize.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/meli/Documents/GitHub/Compilador_Rust&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Cargo.Run main (1).executor": "Run",
+    "Cargo.Run main.executor": "Debug",
+    "Cargo.Run parse.executor": "Run",
+    "Cargo.Run t1_lexer.executor": "Run",
+    "Cargo.Run tokenize.executor": "Debug",
+    "Cargo.run.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/meli/Documents/GitHub/Compilador_Rust",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "language.rust.cargo.check",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Cargo.Run parse">
+}]]></component>
+  <component name="RunManager" selected="Cargo.run">
     <configuration name="Run main (1)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="run --package Compilador_Rust --bin main" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -172,12 +185,30 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="run" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="run --bin parse salida.tok -o arbol.out" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Cargo.Run parse" />
-        <item itemvalue="Cargo.Run main (1)" />
-        <item itemvalue="Cargo.Run main" />
-        <item itemvalue="Cargo.Run tokenize" />
+        <item itemvalue="Cargo.run" />
+        <item itemvalue="Cargo.run" />
+        <item itemvalue="Cargo.run" />
+        <item itemvalue="Cargo.run" />
+        <item itemvalue="Cargo.run" />
       </list>
     </recent_temporary>
   </component>
@@ -197,7 +228,9 @@
       <workItem from="1729385765053" duration="1566000" />
       <workItem from="1729387380330" duration="10451000" />
       <workItem from="1729544162433" duration="5873000" />
-      <workItem from="1729642556333" duration="2598000" />
+      <workItem from="1729642556333" duration="8407000" />
+      <workItem from="1729656951168" duration="422000" />
+      <workItem from="1729736324614" duration="1511000" />
     </task>
     <task id="LOCAL-00001" summary="Supuestos errores">
       <option name="closed" value="true" />
